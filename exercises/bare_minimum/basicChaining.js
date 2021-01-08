@@ -10,11 +10,22 @@
 
 var fs = require('fs');
 var Promise = require('bluebird');
-
+//import other modules with pluckFirstLine and getGitHubProfile
 
 
 var fetchProfileAndWriteToFile = function(readFilePath, writeFilePath) {
-  // TODO
+  // Read github username using pluckFirstLine
+  return pluckFirstLineFromFileAsync(readFilePath)
+    .then((user) => {
+      // getGitHubProfileAsync using username plucked
+      return getGitHubProfileAsync(user);
+    })
+    .then((profileBody) => {
+      // assigning JSON response of API to the file in writeFilePath
+      fs.writeFile(writeFilePath, profileBody, (err) => {
+        if (err) {}
+      });
+    });
 };
 
 // Export these functions so we can test them
