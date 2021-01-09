@@ -11,19 +11,24 @@
 var fs = require('fs');
 var Promise = require('bluebird');
 //import other modules with pluckFirstLine and getGitHubProfile
+var username = require('./promiseConstructor.js');
+var gitHub = require('./promisification.js');
 
 
 var fetchProfileAndWriteToFile = function(readFilePath, writeFilePath) {
   // Read github username using pluckFirstLine
-  return pluckFirstLineFromFileAsync(readFilePath)
+  return username.pluckFirstLineFromFileAsync(readFilePath)
     .then((user) => {
       // getGitHubProfileAsync using username plucked
-      return getGitHubProfileAsync(user);
+      return gitHub.getGitHubProfileAsync(user);
     })
     .then((profileBody) => {
       // assigning JSON response of API to the file in writeFilePath
-      fs.writeFile(writeFilePath, profileBody, (err) => {
-        if (err) {}
+      return new Promise((resolve, reject) => {
+        fs.writeFile(writeFilePath, JSON.stringify(profileBody), (err) => {
+          if (err) { return reject(`An error has occurred: ${err}`); }
+          resolve('Successfully wrote file.');
+        });
       });
     });
 };
